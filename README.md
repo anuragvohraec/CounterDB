@@ -1,5 +1,6 @@
 # vDB
-If you wanted to manage unsigned long numbers, say likes and dislikes count, than it just does that.
+If you wanted to manage and persist unsigned long numbers, **say likes and dislikes count**, than it just does that.
+
 Consider it as an array of unsigned long numbers. To read/create you use index, which are unsigned long numbers. The data is persisted.
 
 * Persistant.
