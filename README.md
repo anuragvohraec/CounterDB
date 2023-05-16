@@ -1,14 +1,12 @@
 # vDB
-If you wanted to manage and persist unsigned long numbers, **say likes and dislikes count**, than it just does that.
+If you wanted to manage and persist unsigned long numbers, **say likes/dislikes/views count**, than it just does that.
 
-Consider it as an array of unsigned long numbers. To read/create you use index, which are unsigned long numbers. The data is persisted.
-
-* Persistant.
-* Multithreading support. An number of threads can do read. Only one thread can write an index at a time. The rest will wait for there turn.
+To read/create counts you use index, which are unsigned long numbers. Consider it as an array of unsigned long numbers. The data though is persisted.
+Any number of threads can read any index. Only one thread can write an index at a time. The rest will wait for there turn.
 
 But why ?
-* To Store likes , dislikes or view of Videos
-* To store any unsigned long number you wanted to store and retrive it with an index.
+* To Store likes , dislikes or View counts.
+* To store any unsigned long number for any purpose, and retrive it with an index.
 
 Usage example:
 
@@ -21,7 +19,7 @@ int main(int argc, const char** argv) {
     //create DB
     auto db = new VDB("./db/test1.db",10);
     
-    //insert value ate index 1, and index 4
+    //insert value at index 1, and index 4
     db->update(1, 200000);
     db->update(4, 3400);
     
