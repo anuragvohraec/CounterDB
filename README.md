@@ -1,12 +1,12 @@
 # vDB
-If you wanted to manage and persist unsigned long numbers, **say likes/dislikes/views count**, than it just does that.
 
-To read/create counts you use index, which are unsigned long numbers. Consider it as an array of unsigned long numbers. The data though is persisted.
-Any number of threads can read any index. Only one thread can write an index at a time. The rest will wait for there turn.
+A Solution to durably store your likes/dislikes count (or any count of your choice).
 
-But why ?
-* To Store likes , dislikes or View counts.
-* To store any unsigned long number for any purpose, and retrive it with an index.
+Its takes O(1) time to read and put unsigned long values to DB, as it similar to Arrays (there are no keys but you use index to store counts).
+
+Single header only C++ file for storing and retreiving numbers.
+
+And one more thing it does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultenous writes. Well if you task is just to store likes/dislikes counts, than its muts not be much of a problems. As reads are done more than writes for such cases.
 
 Usage example:
 
