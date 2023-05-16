@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iostream>
 #include <fstream>
+#include <stdexcept>
 #include <sys/mman.h>
 #include <fcntl.h>
 #include <unistd.h>
@@ -25,6 +26,9 @@ namespace vDB {
         }
 
         unsigned long read(unsigned long index){
+            if(index > maxExpectedIndex){
+                throw std::runtime_error("Index can't be greater than maxExpectedIndex");
+            }
             return data[index];
         }
 
@@ -41,9 +45,10 @@ namespace vDB {
         size_t MAX_SIZE=-1;
         unsigned long* data=NULL;
         std::mutex mtx;
+        unsigned long maxExpectedIndex=-1;
     };
 
-    inline VDB::VDB(std::string dbFilePath, unsigned long maxExpectedIndex)
+    inline VDB::VDB(std::string dbFilePath, unsigned long maxExpectedIndex):maxExpectedIndex(maxExpectedIndex),dbFilePath(dbFilePath)
     {
         // Open the file
         fd = open(&dbFilePath[0], O_RDWR | O_CREAT, (mode_t)0600);
