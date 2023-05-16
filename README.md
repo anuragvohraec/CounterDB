@@ -6,7 +6,7 @@ Its takes O(1) time to read and put unsigned long values to DB, as it similar to
 
 Single header only C++ file for storing and retreiving numbers.
 
-And one more thing it does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultenous writes. Well if you task is just to store likes/dislikes counts, than its muts not be much of a problems. As reads are done more than writes for such cases.
+And one more thing it does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultenous writes. Well if you task is just to store likes/dislikes counts, than its must not be much of a problem. As reads are done more than writes for such cases.
 
 Usage example:
 
