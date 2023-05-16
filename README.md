@@ -5,6 +5,10 @@ Consider it as an array of unsigned long numbers. To read/create you use index, 
 * Persistant.
 * Multithreading support. An number of threads can do read. Only one thread can write an index at a time. The rest will wait for there turn.
 
+But why ?
+* To Store likes , dislikes or view of Videos
+* To store any unsigned long number you wanted to store and retrive it with an index.
+
 Usage example:
 
 ```c++
