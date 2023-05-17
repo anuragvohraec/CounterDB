@@ -35,7 +35,7 @@ namespace vDB {
         }
 
         /*
-        umber of index issues so far.
+        Number of indices issued so far.
         */
         unsigned long maxIndexIssued(){
             return data[0];
@@ -43,8 +43,8 @@ namespace vDB {
 
         
         /*
-        Increment the value at given index.
-        Note: Index should have been issued once, in order to use it durably
+        Increment the value at the given index.
+        Note: use only those index which you have issues once, in order to use it durably
         */
         unsigned long increment(unsigned long index, unsigned long v=1){
             if(index==0){
