@@ -30,7 +30,7 @@ int main(int argc, const char** argv) {
 
     std::cout << "Count: " << db->read(t)<< std::endl;
 
-    //this should not be called frequently, but its should be DO called if you want stronger durability.
+    //this should not be called frequently, but it should be DO called if you want greater durability.
     db->sync();
 
     delete db;
