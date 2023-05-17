@@ -35,17 +35,18 @@ namespace vDB {
         }
 
         /*
-        Number of Indices issued so far
+        umber of index issues so far.
         */
-        unsigned long numberOfIndicesIssued(){
+        unsigned long maxIndexIssued(){
             return data[0];
         }
 
+        
         /*
-        Update the value at a particular index.
-        throws runtime_error if index is zero (as its used internally) , or the index is greater than maxExpectedIndex
+        Increment the value at given index.
+        Note: Index should have been issued once, in order to use it durably
         */
-        void update(unsigned long index, unsigned long value){
+        unsigned long increment(unsigned long index, unsigned long v=1){
             if(index==0){
                 throw std::runtime_error("Cannot modify zero index, its used to manage ther index");
             }
@@ -53,10 +54,12 @@ namespace vDB {
                 throw std::runtime_error("Index can't be greater than maxExpectedIndex");
             }
             mtx.lock();
-            // Write data to the file
-            std::memcpy(&data[index],&value,sizeof(unsigned long));
+            auto t = data[index] + v;
+            std::memcpy(&data[index],&t,sizeof(unsigned long));
             mtx.unlock();
+            return t;
         }
+
 
         /**
         Reads value at the given index.
