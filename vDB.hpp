@@ -44,7 +44,7 @@ namespace vDB {
         
         /*
         Increment the value at the given index.
-        Note: use only those index which you have issues once, in order to use it durably
+        Note: use only those index which you have issued once, in order to use it durably
         */
         unsigned long increment(unsigned long index, unsigned long v=1){
             if(index==0){
