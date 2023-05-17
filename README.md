@@ -6,20 +6,20 @@ Its time complexity is O(1).
 
 Single header only C++ file for storing and retrieving numbers.
 
-And one more thing it does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultaneous writes to an index. Well if your task is just to store likes/dislikes counts, than it must not be much of a problem. As reads are done more than writes for such cases.
+It does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultaneous writes to an index. Well if your task is just to store likes/dislikes counts, than it must not be much of a problem. As reads are done more than writes for such cases.
 
 Usage example:
 
 ```c++
-#include "vDB/vDB.hpp"
+#include "counterDB/counterDB.hpp"
 
-using namespace vDB;
+using namespace counterDB;
     
 int main(int argc, const char** argv) {
     //create DB file : and maximum number of counter supported
-    auto db = new VDB("./db/test1.db",10);
+    auto db = new CounterDB("./db/test1.db",10);
 
-    //To check how many index
+    //To check how many index have been issued so far.
     auto c = db->maxIndexIssued();
     unsigned long t = 1;
     if(c==0){
@@ -30,7 +30,9 @@ int main(int argc, const char** argv) {
 
     std::cout << "Count: " << db->read(t)<< std::endl;
 
-    //this should not be called frequently, but it should be DO called if you want greater durability.
+    //Don't call it frequently. 
+    //If you want greater durability, but it should be DO called. 
+    //Though OS does sync it automatically.
     db->sync();
 
     delete db;

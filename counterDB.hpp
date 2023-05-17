@@ -9,14 +9,15 @@
 #include <cstring>
 #include <mutex>
 
-#ifndef VDB
+#ifndef COUNTER_DB
+#define COUNTER_DB
 
-namespace vDB {
-    class VDB
+namespace counterDB {
+    class CounterDB
     {
     public:
-        VDB(std::string dbFilePath, unsigned long maxExpectedIndex);
-        ~VDB();
+        CounterDB(std::string dbFilePath, unsigned long maxExpectedIndex);
+        ~CounterDB();
 
         /**
         Should be called only once, to issue and index to use counter for.
@@ -93,7 +94,7 @@ namespace vDB {
         unsigned long maxExpectedIndex=-1;
     };
 
-    inline VDB::VDB(std::string dbFilePath, unsigned long maxExpectedIndex):maxExpectedIndex(maxExpectedIndex),dbFilePath(dbFilePath)
+    inline CounterDB::CounterDB(std::string dbFilePath, unsigned long maxExpectedIndex):maxExpectedIndex(maxExpectedIndex),dbFilePath(dbFilePath)
     {
         // Open the file
         fd = open(&dbFilePath[0], O_RDWR | O_CREAT, (mode_t)0600);
@@ -133,7 +134,7 @@ namespace vDB {
 
     };
 
-    inline VDB::~VDB()
+    inline CounterDB::~CounterDB()
     {
         // Unmap the file from memory
         if (munmap(data, MAX_SIZE) == -1) {
@@ -144,4 +145,4 @@ namespace vDB {
     };
 }
 
-#endif // !VDB
+#endif // !COUNTER_DB
