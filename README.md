@@ -1,12 +1,12 @@
-# vDB
+# CounterDB
 
-A Solution to durably store your likes/dislikes count (or any count of your choice).
+A Solution to durably store your counts. For example number of likes/dislikes on a post.
 
-Its takes O(1) time to read and put unsigned long values to DB, as it similar to Arrays (there are no keys but you use index to store counts).
+Its time complexity is O(1). 
 
-Single header only C++ file for storing and retreiving numbers.
+Single header only C++ file for storing and retrieving numbers.
 
-And one more thing it does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultenous writes. Well if you task is just to store likes/dislikes counts, than its must not be much of a problem. As reads are done more than writes for such cases.
+And one more thing it does this without increasing the file size, as its not append only DB. Which also means it can be slower on simultaneous writes to an index. Well if your task is just to store likes/dislikes counts, than it must not be much of a problem. As reads are done more than writes for such cases.
 
 Usage example:
 
@@ -16,32 +16,29 @@ Usage example:
 using namespace vDB;
     
 int main(int argc, const char** argv) {
-    //create DB
+    //create DB file : and maximum number of counter supported
     auto db = new VDB("./db/test1.db",10);
+
+    //To check how many index
+    auto c = db->maxIndexIssued();
+    unsigned long t = 1;
+    if(c==0){
+        t = db->issueAnIndex();
+    }
     
-    //insert value at index 1, and index 4
-    db->update(1, 200000);
-    db->update(4, 3400);
-    
-    
-    //read the value after insertion
-    std::cout << db->read(1) <<" "<< db->read(4) << std::endl;
-    
-    //read again
-    auto t = db->read(4);
-    //update the value: this will change on every restart
-    db->update(4, t+400);
-    
-  
-    std::cout << db->read(4) << std::endl;
-    
-    //by default value at an index is 0
-    std::cout << db->read(9) << std::endl;
-    
-    //deleting db instance will not delet ethe file, it only closes the db fie properly
+    db->increment(t);
+
+    std::cout << "Count: " << db->read(t)<< std::endl;
+
+    //this should not be called frequently, but its should be DO called if you want stronger durability.
+    db->sync();
+
     delete db;
     return 0;
 }
 ```
 
 
+# Notes:
+1. To get maximum speed: Use a cache layer and pass bigger increments in one go using `unsigned long increment(unsigned long index, unsigned long increment=1)`.
+2. An index can count upto maximum value of `unsigned long`. So if you wanted higher counts than that, than you must use more than one index and sum them later using some custom logic.

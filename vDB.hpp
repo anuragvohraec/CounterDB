@@ -46,7 +46,7 @@ namespace vDB {
         Increment the value at the given index.
         Note: use only those index which you have issued once, in order to use it durably
         */
-        unsigned long increment(unsigned long index, unsigned long v=1){
+        unsigned long increment(unsigned long index, unsigned long increment=1){
             if(index==0){
                 throw std::runtime_error("Cannot modify zero index, its used to manage ther index");
             }
@@ -54,7 +54,7 @@ namespace vDB {
                 throw std::runtime_error("Index can't be greater than maxExpectedIndex");
             }
             mtx.lock();
-            auto t = data[index] + v;
+            auto t = data[index] + increment;
             std::memcpy(&data[index],&t,sizeof(unsigned long));
             mtx.unlock();
             return t;
