@@ -18,13 +18,50 @@ namespace vDB {
         VDB(std::string dbFilePath, unsigned long maxExpectedIndex);
         ~VDB();
 
+        /**
+        Should be called only once, to issue and index to use counter for.
+        Throws runtime_error if maxExpectedIndex have been issued already
+        */
+        unsigned long issueAnIndex(){
+            mtx.lock();
+            auto t = data[0]+1;
+            if(t>maxExpectedIndex){
+                throw std::runtime_error("Cannot create new indices beyond maxExpectedIndex");
+            }
+
+            std::memcpy(data,&t,sizeof(unsigned long));
+            mtx.unlock();
+            return t;
+        }
+
+        /*
+        Number of Indices issued so far
+        */
+        unsigned long numberOfIndicesIssued(){
+            return data[0];
+        }
+
+        /*
+        Update the value at a particular index.
+        throws runtime_error if index is zero (as its used internally) , or the index is greater than maxExpectedIndex
+        */
         void update(unsigned long index, unsigned long value){
+            if(index==0){
+                throw std::runtime_error("Cannot modify zero index, its used to manage ther index");
+            }
+            if(index > maxExpectedIndex){
+                throw std::runtime_error("Index can't be greater than maxExpectedIndex");
+            }
             mtx.lock();
             // Write data to the file
             std::memcpy(&data[index],&value,sizeof(unsigned long));
             mtx.unlock();
         }
 
+        /**
+        Reads value at the given index.
+        throws runtime_error if the index is greater than maxExpectedIndex
+        */
         unsigned long read(unsigned long index){
             if(index > maxExpectedIndex){
                 throw std::runtime_error("Index can't be greater than maxExpectedIndex");
@@ -32,12 +69,17 @@ namespace vDB {
             return data[index];
         }
 
+        /*
+        Sync data to underlying database. Though its done automaticaly. But calling it appropriate time can give strong durabilities. 
+        Don't call it too frequent else it can impact performance.
+        */
         void sync(){
             // Sync the memory-mapped file to disk
             if (msync(data, MAX_SIZE, MS_SYNC) == -1) {
                 perror("Could not sync the file to disk");
             }
         }
+        
     
     private:
         std::string dbFilePath;
