@@ -16,21 +16,21 @@ namespace counterDB {
     class CounterDB
     {
     public:
-        CounterDB(std::string dbFilePath, unsigned long maxExpectedIndex);
+        CounterDB(std::string dbFilePath, unsigned long long maxExpectedIndex);
         ~CounterDB();
 
         /**
         Should be called only once, to issue and index to use counter for.
         Throws runtime_error if maxExpectedIndex have been issued already
         */
-        unsigned long issueAnIndex(){
+        unsigned long long issueAnIndex(){
             mtx.lock();
             auto t = data[0]+1;
             if(t>maxExpectedIndex){
                 throw std::runtime_error("Cannot create new indices beyond maxExpectedIndex");
             }
 
-            std::memcpy(data,&t,sizeof(unsigned long));
+            std::memcpy(data,&t,sizeof(unsigned long long));
             mtx.unlock();
             return t;
         }
@@ -38,7 +38,7 @@ namespace counterDB {
         /*
         Number of indices issued so far.
         */
-        unsigned long maxIndexIssued(){
+        unsigned long long maxIndexIssued(){
             return data[0];
         }
 
@@ -47,7 +47,7 @@ namespace counterDB {
         Increment the value at the given index.
         Note: use only those index which you have issued once, in order to use it durably
         */
-        unsigned long increment(unsigned long index, unsigned long increment=1){
+        unsigned long long increment(unsigned long long index, unsigned long long increment=1){
             if(index==0){
                 throw std::runtime_error("Cannot modify zero index, its used to manage ther index");
             }
@@ -56,7 +56,7 @@ namespace counterDB {
             }
             mtx.lock();
             auto t = data[index] + increment;
-            std::memcpy(&data[index],&t,sizeof(unsigned long));
+            std::memcpy(&data[index],&t,sizeof(unsigned long long));
             mtx.unlock();
             return t;
         }
@@ -66,7 +66,7 @@ namespace counterDB {
         Reads value at the given index.
         throws runtime_error if the index is greater than maxExpectedIndex
         */
-        unsigned long read(unsigned long index){
+        unsigned long long read(unsigned long long index){
             if(index > maxExpectedIndex){
                 throw std::runtime_error("Index can't be greater than maxExpectedIndex");
             }
@@ -89,12 +89,12 @@ namespace counterDB {
         std::string dbFilePath;
         int fd;
         size_t MAX_SIZE=-1;
-        unsigned long* data=NULL;
+        unsigned long long* data=NULL;
         std::mutex mtx;
-        unsigned long maxExpectedIndex=-1;
+        unsigned long long maxExpectedIndex=-1;
     };
 
-    inline CounterDB::CounterDB(std::string dbFilePath, unsigned long maxExpectedIndex):maxExpectedIndex(maxExpectedIndex),dbFilePath(dbFilePath)
+    inline CounterDB::CounterDB(std::string dbFilePath, unsigned long long maxExpectedIndex):maxExpectedIndex(maxExpectedIndex),dbFilePath(dbFilePath)
     {
         // Open the file
         fd = open(&dbFilePath[0], O_RDWR | O_CREAT, (mode_t)0600);
@@ -105,7 +105,7 @@ namespace counterDB {
 
         // To use a file as memory file we need to extends its size first to the 
         //maximum size of this database
-        MAX_SIZE = maxExpectedIndex * sizeof(unsigned long);
+        MAX_SIZE = maxExpectedIndex * sizeof(unsigned long long);
         {
             //1. SO here we seek file to almost last position
             off_t offset = lseek(fd, MAX_SIZE - 1, SEEK_SET);
@@ -125,7 +125,7 @@ namespace counterDB {
         }
 
         // Map the file to memory
-        data = static_cast<unsigned long*>(mmap(0, MAX_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0));
+        data = static_cast<unsigned long long*>(mmap(0, MAX_SIZE, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0));
         if (data == MAP_FAILED) {
             close(fd);
             perror("Error mmapping the file");

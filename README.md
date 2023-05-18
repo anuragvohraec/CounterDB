@@ -21,7 +21,7 @@ int main(int argc, const char** argv) {
 
     //To check how many index have been issued so far.
     auto c = db->maxIndexIssued();
-    unsigned long t = 1;
+    unsigned long long t = 1;
     if(c==0){
         t = db->issueAnIndex();
     }
@@ -42,5 +42,5 @@ int main(int argc, const char** argv) {
 
 
 # Notes:
-1. To get maximum speed: Use a cache layer and pass bigger increments in one go using `unsigned long increment(unsigned long index, unsigned long increment=1)`.
-2. An index can count upto maximum value of `unsigned long`. So if you wanted higher counts than that, than you must use more than one index and sum them later using some custom logic.
+1. To get maximum speed: Use a cache layer and pass bigger increments in one go using `unsigned long long increment(unsigned long long index, unsigned long long increment=1)`.
+2. An index can count upto maximum value of `unsigned long long`. So if you wanted higher counts than that, than you must use more than one index and sum them later using some custom logic.
